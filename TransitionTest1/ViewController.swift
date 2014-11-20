@@ -30,6 +30,10 @@ class ViewController: UIViewController {
         let toViewController = segue.destinationViewController as UIViewController
         toViewController.transitioningDelegate = transitionManager
     }
-
+    
+    override func preferredStatusBarStyle() -> UIStatusBarStyle {
+        return self.presentingViewController == nil ? UIStatusBarStyle.Default : UIStatusBarStyle.LightContent
+    }
+    
 }
 
