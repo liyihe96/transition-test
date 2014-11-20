@@ -17,30 +17,32 @@ class TransitionManager: NSObject,UIViewControllerTransitioningDelegate, UIViewC
         let fromView = transitionContext.viewForKey(UITransitionContextFromViewKey)!
         let toView = transitionContext.viewForKey(UITransitionContextToViewKey)!
         
-        let offScreenRight = CGAffineTransformMakeTranslation(container.frame.width, 0)
-        let offScreenLeft = CGAffineTransformMakeTranslation(-container.frame.width, 0)
+        let pi:CGFloat = 3.14159265359
         
-        if self.presenting {
-            toView.transform = offScreenRight
-        } else {
-            toView.transform = offScreenLeft
-        }
+        let offScreenRotateIn = CGAffineTransformMakeRotation(-pi/2)
+        let offScreenRotateOut = CGAffineTransformMakeRotation(pi/2)
+        
+        toView.transform = presenting ? offScreenRotateIn : offScreenRotateOut
+        
+        toView.layer.anchorPoint = CGPoint(x:0, y:0)
+        fromView.layer.anchorPoint = CGPoint(x:0, y:0)
+        
+        toView.layer.position = CGPoint(x:0, y:0)
+        fromView.layer.position = CGPoint(x:0, y:0)
+        
+        
         container.addSubview(fromView)
         container.addSubview(toView)
         
         let duration = self.transitionDuration(transitionContext)
         
-        UIView.animateWithDuration(duration, delay: 0, usingSpringWithDamping: 0.5, initialSpringVelocity: 0.8, options: nil, animations: {
-            if self.presenting {
-                fromView.transform = offScreenLeft
-            } else {
-                fromView.transform = offScreenRight
-            }
+        UIView.animateWithDuration(duration, delay: 0, usingSpringWithDamping: 0.5, initialSpringVelocity: 0.8, options: nil, animations: { () -> Void in
+            fromView.transform = self.presenting ? offScreenRotateOut : offScreenRotateIn
             toView.transform = CGAffineTransformIdentity
         }) { (finished) -> Void in
             transitionContext.completeTransition(true)
         }
-        
+
     }
     func transitionDuration(transitionContext: UIViewControllerContextTransitioning) -> NSTimeInterval {
         return 0.5
